@@ -12,8 +12,8 @@ from tensorflow.keras import layers
 
 
 ROOT_DIR = Path(__file__).resolve().parent
-PREPARED_DATA_FILE = ROOT_DIR / "clean_data" / "augmented_data.json"
-MODEL_FILE = ROOT_DIR / "pickaboo_augmented.h5"
+PREPARED_DATA_FILE = ROOT_DIR / "clean_data" / "exagerated_data.json"
+MODEL_FILE = ROOT_DIR / "pickaboo_exagerated.h5"
 SCALER_FILE = ROOT_DIR / "scaler.npy"
 
 
@@ -122,7 +122,7 @@ def main() -> None:
     history = model.fit(
         X_train_scaled,
         y_train,
-        epochs=2,
+        epochs=30,
         batch_size=32,
         validation_data=(X_val_scaled, y_val),
         verbose=1,
