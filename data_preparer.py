@@ -101,7 +101,6 @@ def prepare_batch(batch: dict[str, Any], fx_poses: dict[str, dict[str, float]]) 
     return {
         "batch_id": batch.get("batch_id"),
         "members": prepared_members,
-        "average_distance": round3(batch["average_distance"]),
         "pickable": bool(batch["pickable"]),
         "cam_distance": round3(cam_distance),
     }
