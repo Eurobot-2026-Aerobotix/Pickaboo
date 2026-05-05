@@ -99,6 +99,19 @@ graph TD
     G --> H[Pickable probability]
 ```
 
+  ## Trainer_v2 Architecture
+
+  Trainer_v2 modifies the original architecture by explicitly linking the per-member deviation features into the final hidden representation before the output. Concretely:
+
+  - The 24-feature input is sliced into the same four 6-feature member parts as before.
+  - Each member branch is passed through a small Dense block (4 units, ReLU) and concatenated into a 16-unit vector.
+  - That concatenated vector passes through two fully-connected layers (`Dense(12)` then `Dense(12)`).
+  - The four scalar `deviation` features (one per member — input indices 3, 9, 15, 21) are extracted directly from the input and concatenated with the output of the last hidden layer.
+  - The final classification `Dense(1, activation='sigmoid')` takes this concatenated vector as input, so each member's deviation has a direct pathway to influence the final decision.
+
+  This connects the deviation signals to all nodes in the last hidden layer, making deviation-driven signals available to the classifier at the final stage.
+
+
 ## How To Run
 
 From the project root, using the virtual environment:
