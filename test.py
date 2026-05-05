@@ -16,6 +16,8 @@ MODEL_FILES = [
     ROOT_DIR / "pickaboo.h5",
     ROOT_DIR / "pickaboo_augmented.h5",
     ROOT_DIR / "pickaboo_exagerated.h5",
+    ROOT_DIR / "pickaboo_v2.h5",
+    ROOT_DIR / "pickaboo_exagerated_v2.h5",
 ]
 
 BLUE_BY_ARUCO_ID = {
