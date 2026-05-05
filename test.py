@@ -18,6 +18,7 @@ MODEL_FILES = [
     ROOT_DIR / "pickaboo_exagerated.h5",
     ROOT_DIR / "pickaboo_v2.h5",
     ROOT_DIR / "pickaboo_exagerated_v2.h5",
+    ROOT_DIR / "pickaboo_ex_ab_v2.h5"
 ]
 
 BLUE_BY_ARUCO_ID = {
@@ -35,7 +36,7 @@ def normalize_deviation(delta: float) -> float:
         delta -= 180
     while delta < -90:
         delta += 180
-    return delta
+    return abs(delta)
 
 
 def load_fx_poses(path: Path) -> dict[str, dict[str, float]]:

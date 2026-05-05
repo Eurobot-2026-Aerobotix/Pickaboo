@@ -12,8 +12,8 @@ from tensorflow.keras import layers
 
 
 ROOT_DIR = Path(__file__).resolve().parent
-PREPARED_DATA_FILE = ROOT_DIR / "clean_data" / "prepared_data.json"
-MODEL_FILE = ROOT_DIR / "pickaboo_v2.h5"
+PREPARED_DATA_FILE = ROOT_DIR / "clean_data" / "exagerated_absolute_data.json"
+MODEL_FILE = ROOT_DIR / "pickaboo_ex_ab_v2.h5"
 SCALER_FILE = ROOT_DIR / "scaler.npy"
 
 
