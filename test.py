@@ -9,7 +9,7 @@ import tensorflow as tf
 
 
 ROOT_DIR = Path(__file__).resolve().parent
-TEST_SAMPLE_FILE = ROOT_DIR / "test_sample.json"
+TEST_SAMPLE_FILE = ROOT_DIR / "test_samples.json"
 FX_POSES_FILE = ROOT_DIR / "fx_poses.json"
 SCALER_FILE = ROOT_DIR / "scaler.npy"
 MODEL_FILES = [
@@ -102,35 +102,42 @@ def build_feature_vector(prepared_batch: dict) -> np.ndarray:
 
 def main() -> None:
     with TEST_SAMPLE_FILE.open("r", encoding="utf-8") as handle:
-        sample = json.load(handle)
+        data = json.load(handle)
+
+    # support either a single sample (dict) or a list of samples
+    samples = data if isinstance(data, list) else [data]
 
     fx_poses = load_fx_poses(FX_POSES_FILE)
-    prepared = prepare_batch(sample, fx_poses)
-    X = build_feature_vector(prepared)
 
     scaler = np.load(SCALER_FILE, allow_pickle=True).item()
-    X_scaled = scaler.transform(X)
 
-    print("Prepared batch:")
-    print(json.dumps(prepared, indent=2))
-    print()
-
-    found_model = False
+    # load available models once
+    models = []
     for model_file in MODEL_FILES:
         if not model_file.exists():
             continue
-        found_model = True
-        model = tf.keras.models.load_model(model_file, compile=False, safe_mode=False)
-        probability = float(model.predict(X_scaled, verbose=0)[0][0])
-        predicted_pickable = probability >= 0.5
+        models.append((model_file.name, tf.keras.models.load_model(model_file, compile=False, safe_mode=False)))
 
-        print(f"Model: {model_file.name}")
-        print(f"  probability_pickable: {probability:.6f}")
-        print(f"  predicted_label: {'pickable' if predicted_pickable else 'non-pickable'}")
+    if not models:
+        raise FileNotFoundError("No model files found in MODEL_FILES")
+
+    for idx, sample in enumerate(samples, start=1):
+        prepared = prepare_batch(sample, fx_poses)
+        X = build_feature_vector(prepared)
+        X_scaled = scaler.transform(X)
+
+        print(f"Prepared batch #{idx} (batch_id={prepared.get('batch_id')}) :")
+        print(json.dumps(prepared, indent=2))
         print()
 
-    if not found_model:
-        raise FileNotFoundError("No model files found in MODEL_FILES")
+        for model_name, model in models:
+            probability = float(model.predict(X_scaled, verbose=0)[0][0])
+            predicted_pickable = probability >= 0.5
+
+            print(f"Model: {model_name}")
+            print(f"  probability_pickable: {probability:.6f}")
+            print(f"  predicted_label: {'pickable' if predicted_pickable else 'non-pickable'}")
+            print()
 
 
 if __name__ == "__main__":
